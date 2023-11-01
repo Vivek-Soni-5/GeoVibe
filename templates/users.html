@@ -1,0 +1,99 @@
+<html>
+<head>
+    <script  src="{{ url_for('static', filename='vendor.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='loader.css') }}">  
+</head>
+<body id = "content">
+
+    {% if result == "ok" %}
+        {{msg}}
+    {% endif %}
+
+    {%if result == "ok dialog" %}
+    <dialog id="my-dialog">
+        <div>
+            {% for item in msg %}
+                <h2>{{item.value.shop_name}}</h2>
+                <p>{{ item.value.address }}</p><br><hr>
+            {% endfor %}
+            
+        </div>
+        <div>
+            <button id="send_email">send me email</button>
+            <button id="close-dialog">Close</button>
+        </div>
+    </dialog>
+        <script>
+            
+            var curUser = {{ cur_user | tojson | safe }};
+            var msg = {{ msg | tojson | safe }};
+  
+            const closeDialogButton = document.getElementById('close-dialog');
+            const send_email_btn = document.getElementById('send_email');
+            const dialog = document.getElementById('my-dialog');
+            dialog.showModal();
+
+            function processData(data, cur_user)
+            {
+                const msg = {
+                    'email':cur_user,
+                    'data':data
+                }
+                fetch('/send_email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(msg)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Process the response from the Python method
+                    hideLoader();
+                    console.log(data);
+                })
+                .catch(error => {
+                    hideLoader();
+                    console.error('Error:', error);
+                });
+            }
+
+            function hideLoader() {
+                document.getElementById('loaders').style.display = 'none';
+            }
+
+            function addLoader() {
+                var main_loader_div = document.createElement("div");
+                main_loader_div.innerHTML = "<p style='position:fixed;top:58%;left:49%'>sending email...</p>"
+                main_loader_div.id = "loaders"
+                var loaderDiv = document.createElement("div");
+                loaderDiv.id = "loader";
+                loaderDiv.className = "loader";
+                document.getElementById("content").appendChild(main_loader_div).appendChild(loaderDiv);
+            }
+
+            send_email_btn.addEventListener('click', () => {
+                dialog.style.display = "none";
+                dialog.close();
+                processData(msg, curUser);
+            });
+            closeDialogButton.addEventListener('click', () => {
+                dialog.style.display = "none";
+                dialog.close();
+            });
+            // Add event listener to the button
+            document.getElementById("send_email").addEventListener("click", addLoader);
+        </script>
+    {%endif%}
+
+    <form method="post">
+        <h1>Location</h1>
+        <input type="text" name="user_want" id="user_want" placeholder="What you want?">
+        <input type="text" name="latitude" id="latitude" placeholder="Enter latitude">
+        <input type="text" name="longitude" id="longitude" placeholder="Enter longitude">
+        <button type="button" onclick="getLocation()" id="current_location_btn">Get Current Location</button>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

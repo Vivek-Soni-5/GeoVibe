@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dialog Box Example</title>
+</head>
+<body>
+    <button id="show-dialog">Show Dialog</button>
+
+    <dialog id="my-dialog">
+        <h2>Dialog Box Title</h2>
+        <p>This is the content of the dialog box.</p>
+        <h2>Dialog Box Title</h2>
+        <p>This is the content of the dialog box.</p>
+        <h2>Dialog Box Title</h2>
+        <p>This is the content of the dialog box.</p>
+        <button id="close-dialog">Close</button>
+    </dialog>
+
+    <script>
+        const showDialogButton = document.getElementById('show-dialog');
+        const closeDialogButton = document.getElementById('close-dialog');
+        const dialog = document.getElementById('my-dialog');
+
+        showDialogButton.addEventListener('click', () => {
+            dialog.showModal();
+        });
+
+        closeDialogButton.addEventListener('click', () => {
+            dialog.close();
+        });
+    </script>
+</body>
+</html>

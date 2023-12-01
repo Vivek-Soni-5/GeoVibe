@@ -1,28 +1,94 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Vendor data</title>
-    <script  src="{{ url_for('static', filename='vendor.js') }}"></script>
+    <title>Vendor Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor_registration.css') }}">
+    <script src="{{ url_for('static', filename='vendor.js') }}"></script>
 </head>
 <body>
-    {% if result == "ok" %}
-        <p>Data Added Successfully !</p>
-    {% elif result == "not ok" %}
-        <p>error occured</p>
-    {% endif %}
-    <form method="post">
-        <input type="text" name="shop_name" placeholder="Enter Your Shop Name">
-        <input type="text" name="category" placeholder="Enter category">
-        <input type="text" name="products" placeholder="Enter products(comma separated)">
-        <input type="text" name="phone" placeholder="Enter phone">
-        <input type="text" name="email" placeholder="Enter email">
-        <input type="text" name="address" placeholder="Enter address">
-        <input type="text" name="working_hour" placeholder="Enter working_hour">
-        <input type="text" id="longitude" name="longitude" placeholder="Enter longitude">
-        <input type="text" id="latitude" name="latitude" placeholder="Enter latitude">
-        <button type="button" onclick="getLocation()" id="current_location_btn">Get Current Location</button>
-        <input type="submit" value="Submit">
-    </form>
-
+    <div class="container">
+        {% if result == "ok" %}
+            <p class="success-message">Data Added Successfully!</p>
+        {% elif result == "not ok" %}
+            <p class="error-message">Error Occurred</p>
+        {% endif %}
+        <h2>Vendor Registration</h2>
+        <form method="post" action="/vendor_registration" enctype="multipart/form-data">
+            <div class="input-group">
+                <label for="business_name">Business Name:</label>
+                <input type="text" id="business_name" name="business_name" placeholder="Enter business name" required>
+            </div>
+            <div class="input-group">
+                <label for="category">Business Category:</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select business category</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="grocery">Grocery</option>
+                    <option value="medical">Medical</option>
+                    <option value="gift">Gift</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="business_description">Business Description:</label>
+                <textarea id="business_description" name="business_description" placeholder="Enter business description" rows="3" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter phone number" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" placeholder="Enter email" required>
+            </div>
+            <div class="input-group">
+                <label for="owner_name">Owner Name:</label>
+                <input type="text" id="owner_name" name="owner_name" placeholder="Enter owner name" required>
+            </div>
+            <div class="input-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" placeholder="Enter address" required>
+            </div>
+            <div class="input-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" placeholder="Enter city" required>
+            </div>
+            <div class="input-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" placeholder="Enter state" required>
+            </div>
+            <div class="input-group">
+                <label for="pin_code">Pin Code:</label>
+                <input type="text" id="pin_code" name="pin_code" placeholder="Enter Pin Code" required>
+            </div>
+            <div class="input-group">
+                <label for="country">Country:</label>
+                <input type="text" id="country" name="country" placeholder="Enter Country" required>
+            </div>
+            <div class="input-group">
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" placeholder="Enter longitude">
+            </div>
+            <div class="input-group">
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" placeholder="Enter latitude">
+            </div>
+            <div class="input-group">
+                <label for="latitude">Business Image:</label>
+                <input type="file" name="file" accept="image/*" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" placeholder="Enter Password">
+            </div>
+            <div class="input-group">
+                <button type="button" onclick="getLocation()" id="current_location_btn">Get Current Location</button>
+            </div>
+            <div class="input-group">
+                <input type="submit" value="Submit" class="sbm">
+            </div>
+        </form>
+    </div>
 </body>
 </html>
-

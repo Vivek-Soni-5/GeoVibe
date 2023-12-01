@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet Map Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+</head>
+<body>
+
+  <h1>Geographical Map using Leaflet.js</h1>
+
+  <div id="map" style="height: 400px;"></div>
+
+  <script>
+    var mymap = L.map('map').setView([12.905484528794599, 77.50477056138413], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(mymap);
+
+    // Add routing control
+    L.Routing.control({
+        waypoints: [
+          L.latLng(12.905484528794599, 77.50477056138413), // Replace with your origin coordinates
+          L.latLng(12.9028491433809, 77.51833181073052) // Replace with your destination coordinates
+        ],
+        routeWhileDragging: true // Display route while dragging the waypoints
+      }).addTo(mymap);
+
+    // Add markers, polygons, etc. to the map
+    L.marker([12.905484528794599, 77.50477056138413]).addTo(mymap)
+    .bindPopup('A pretty CSS popup.<br> Easily customizable.')
+    .openPopup();
+  </script>
+
+</body>
+</html>

@@ -1,19 +1,35 @@
+function getLocation(event) {
 
+  // Prevent the default form submission behavior
+  event.preventDefault();
 
-function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  } else { 
-    alert("Geolocation is not supported by this browser.");
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+      alert("Geolocation is not supported by this browser.");
   }
 }
 
 function showPosition(position) {
-    document.getElementById("longitude").value = position.coords.longitude;
-    document.getElementById("latitude").value = position.coords.latitude;
+  document.getElementById("latitude").value = position.coords.latitude;
+  document.getElementById("longitude").value = position.coords.longitude;
+  // Continue with the form submission
+  document.forms[0].submit(); // Submit the first form on the page
 }
 
-// document.getElementById('current_location_btn').addEventListener('click', function(event) {
-//     event.preventDefault(); // Prevent the default form submission behavior
-//     // You can add additional code here for this button's behavior if needed
-// });
+function showError(error) {
+  switch (error.code) {
+      case error.PERMISSION_DENIED:
+          alert("User denied the request for Geolocation.");
+          break;
+      case error.POSITION_UNAVAILABLE:
+          alert("Location information is unavailable.");
+          break;
+      case error.TIMEOUT:
+          alert("The request to get user location timed out.");
+          break;
+      case error.UNKNOWN_ERROR:
+          alert("An unknown error occurred.");
+          break;
+  }
+}

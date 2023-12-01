@@ -1,0 +1,91 @@
+
+body {
+    /* font-family: 'Arial', sans-serif !important; */
+    font-family: 'Montserrat', sans-serif !important;
+    background-color: grey;
+    margin: 0;
+    padding: 0;
+    background-image: url('bg_img.png');
+    background-size: cover;
+    background-attachment: fixed;
+    
+}
+
+.container {background: radial-gradient(circle at 0% 100%, yellow 35%, white 36%, transparent 36%), radial-gradient(circle at 100% 0%, yellow 35%, white 36%, transparent 36%);
+
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: lightgoldenrodyellow;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px gray;
+}
+label {
+    /* font-family: 'Montserrat', sans-serif; */
+    /* font-size: 1rem; */
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+input,
+select,
+textarea,
+button {
+    background-color: lightyellow;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button,.sbm {
+    background-color: darkorange;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.success-message {
+    color: #008000;
+    text-align: center;
+}
+
+.error-message {
+    color: #FF0000;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        margin: 30px auto;
+    }
+}
+::placeholder {
+    font-family: 'Montserrat', sans-serif
+}

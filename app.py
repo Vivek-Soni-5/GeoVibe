@@ -32,6 +32,28 @@ firebaseConfig = {
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 db = firebase.database()
+storage = firebase.storage()
+
+
+def search(query):
+    result = []
+    
+    # Get all vendors from the database
+    vendors = db.child("vendor").get().val()
+    
+    # Iterate through each vendor and check if the query matches any field
+    for vendor_key, vendor_data in vendors.items():
+        # Check if the query matches any search prefix
+        if any(prefix in query.lower() for prefix in vendor_data.get("search_prefixes", [])):
+            result.append(vendor_data)
+        else:
+            # Check if the query matches any other field (business_name, owner_name, address, etc.)
+            for field, value in vendor_data.items():
+                if isinstance(value, str) and query.lower() in value.lower():
+                    result.append(vendor_data)
+                    break  # Break the loop if a match is found
+    
+    return result
 
 #calculating distance between two location
 def dist_btn(lat1, lon1, lat2, lon2):
@@ -61,7 +83,7 @@ def send_email():
     json_data = data['data']
     
     for item in json_data:
-        shop_name = item['value']['shop_name']
+        shop_name = item['value']['business_name']
         email = item['value']['email']
         address = item['value']['address']
         subject = "Recommedations"
@@ -112,48 +134,78 @@ def index_login():
     # Render the HTML form
     return render_template('login_signup.html')
 
-@app.route('/vendor_dashboard', methods=['GET', 'POST'])
-def vendor_dashboard():
+@app.route('/vendor_registration', methods=['GET', 'POST'])
+def vendor_registration():
     if request.method == 'POST':
-        shop_name = request.form['shop_name']
+        business_name = request.form['business_name']
         category = request.form['category']
-        products = request.form['products']
+        business_description = request.form['business_description']
         phone = request.form['phone']
         email = request.form['email']
+        owner_name = request.form['owner_name']
         address = request.form['address']
-        working_hour = request.form['working_hour']
+        city = request.form['city']
+        state = request.form['state']
+        pin_code = request.form['pin_code']
+        country = request.form['country']
         longitude = request.form['longitude']
         latitude = request.form['latitude']
+        password = request.form['password']
+        image = request.files['file']
         
-        data = {
-            "shop_name":shop_name,
+        # Generate search prefixes from the vendor name
+        search_prefixes = [prefix.lower() for prefix in business_name.split()]
+        
+        # Upload the file to Firebase Storage
+        storage.child("uploads/" + image.filename).put(image)
+
+        # Get the download URL of the uploaded file
+        image_url = storage.child("uploads/" + image.filename).get_url(None)
+        
+        vendor = auth.create_user_with_email_and_password(
+        email=email,
+        password=password
+        )
+        
+        cleaned_email = email.replace('.', '_').replace('@', '_')
+        vendor_ref = db.child('vendor').child(cleaned_email)
+        vendor_ref.set({
+            "business_name":business_name,
             "category":category,
-            "products":products,
+            "business_description":business_description,
             "phone":phone,
             "email":email,
+            "owner_name":owner_name,
             "address":address,
-            "working_hour":working_hour,
+            "city": city,
+            "state": state,
+            "pin_code":pin_code,
+            "country": country,
+            "password": password,
             "longitude":longitude,
-            "latitude":latitude
-        }
-        
-        db.child('vendor').push(data)
-        
+            "latitude":latitude,
+            "image_url": image_url,
+            'search_prefixes': search_prefixes
+        })
+        # db.child('vendor').push(data)
         return render_template('vendor.html', result = "ok")
+    
     return render_template('vendor.html')
 
-@app.route('/users', methods = ['GET','POST'])
-def users(): 
+@app.route('/dialog_box', methods = ['POST', 'GET'])
+def dialog_box():
     current_user = auth.current_user
-    email = str(current_user['email'])
-    if request.method == 'POST':
-        #user_ip = request.remote_addr
-        latitude = request.form['latitude']
-        longitude = request.form['longitude']
-        user_want = request.form['user_want']
-        print(user_want)
-        #if user searches for anything then it will execute
-        if user_want == "":
+    if current_user:
+        email = str(current_user['email'])
+        if request.method == 'POST':
+            #user_ip = request.remote_addr
+            latitude = request.form['latitude']
+            longitude = request.form['longitude']
+
+            # # Assuming data contains latitude and longitude
+            # latitude = data.get('latitude')
+            # longitude = data.get('longitude')
+            
             whole_vendor_data = []
             query_all_vendor = db.child("vendor").get()
             if query_all_vendor.each():
@@ -175,52 +227,147 @@ def users():
             data_json = json.loads(json_whole_vendor_data)
             r = json.dumps(email)
             cur_user = json.loads(r)
-            return render_template('users.html', result = "ok dialog", msg = data_json, cur_user = cur_user)
-        else:        
-            query = db.child("vendor").get()
-            dist_key = {}
-            whole_data = []
-            
-            train_x_data = pd.read_csv('static/train_x.csv')['restaurant'].tolist()
-            train_y_data = pd.read_csv('static/train_y.csv')['restaurant'].tolist()
-            
-            rec_sys = recommendation.AccessoriesRecommendation(train_x_data, train_y_data)
-            recommendations = rec_sys.recommend_phone(user_want)
-            if recommendations:
-                re = recommendations[0]
-                string = re.split("\t")[0]
-            else:
-                string = ""
-            #print(string)
-            
-            # Iterate through the query results
-            if query.each():
-                for result in query.each():
-                    document_id = result.key()
-                    data = result.val()
-                    if data['category'] == string:
+            return jsonify({'result': 'ok dialog', 'msg': data_json, 'cur_user': cur_user})
+        
+@app.route('/users', methods = ['GET','POST'])
+def users():  
+    current_user = auth.current_user
+    if current_user:       
+        email = str(current_user['email'])
+        if request.method == 'POST':
+            #user_ip = request.remote_addr
+            latitude = request.form['latitude']
+            longitude = request.form['longitude']
+            user_want = request.form['user_want']
+            print(user_want)
+            #if user searches for anything then it will execute
+            if user_want == "":
+                whole_vendor_data = []
+                query_all_vendor = db.child("vendor").get()
+                if query_all_vendor.each():
+                    for result in query_all_vendor.each():
+                        document_id = result.key()
+                        data = result.val()
                         distance = dist_btn(data['latitude'], data['longitude'], latitude, longitude)
-                        dist_key[distance] = document_id
-                sorted_keys = sorted(dist_key.keys())
-                for keys in sorted_keys:
-                    d = db.child("vendor").child(dist_key[keys]).get()
-                    value = d.val()
-                    if keys > 1000:
-                        dd = str(round(keys/1000,2)) +"km"
-                    else:
-                        dd = str(round(keys,2)) +"m"
-                    dis = {"distance":dd,
-                        "value":value
-                        }
-                    whole_data.append(dis)
-            else:
-                print("No documents found.")
-            json_whole_data = json.dumps(whole_data)
-            return render_template('users.html', result = "ok", msg = json_whole_data)
+                        print(distance)
+                        if distance > 1000:
+                            ddd = str(round(distance/1000,2)) +"km"
+                        else:
+                            ddd = str(round(distance,2)) +"m"
+                        distance_radius = 1000
+                        if distance <= distance_radius:
+                            dd = {
+                                "distance":ddd,
+                                "value":data
+                            }
+                            #msg = data['shop_name'] + "\n" + "feel free to contact: " + data['email'] + "\n" + "Address: " + data['address'] +"\n"
+                            #send_email(current_user['email'], "Recommendations", msg)
+                            whole_vendor_data.append(dd)
+                json_whole_vendor_data = json.dumps(whole_vendor_data)
+                data_json = json.loads(json_whole_vendor_data)
+                r = json.dumps(email)
+                cur_user = json.loads(r)
+                return render_template('users.html', result = "ok dialog", msg = data_json, cur_user = cur_user)
+                # return jsonify({'result': 'ok dialog', 'msg': data_json, 'cur_user': cur_user})
+            else:        
+                query = db.child("vendor").get()
+                dist_key = {}
+                whole_data = []
                 
+                train_x_data = pd.read_csv('static/train_x.csv')['restaurant'].tolist()
+                train_y_data = pd.read_csv('static/train_y.csv')['restaurant'].tolist()
+                
+                rec_sys = recommendation.AccessoriesRecommendation(train_x_data, train_y_data)
+                recommendations = rec_sys.recommend_phone(user_want)
+                if recommendations:
+                    re = recommendations[0]
+                    string = re.split("\t")[0]
+                else:
+                    string = ""
+                #print(string)
+                # string = ""
+                
+                
+                #searching through business name
+                # Get all vendors from the database
+                vendors = db.child("vendor").get().val()
+                # Iterate through each vendor and check if the query matches any field
+                for vendor_key, vendor_data in vendors.items():
+                    # Check if the query matches any search prefix
+                    if any(prefix in user_want.lower() for prefix in vendor_data.get("search_prefixes", [])):
+                        distance_prefixes = dist_btn(vendor_data['latitude'], vendor_data['longitude'], latitude, longitude)
+                        if distance_prefixes > 1000:
+                            dd = str(round(distance_prefixes/1000,2)) +"km"
+                        else:
+                            dd = str(round(distance_prefixes,2)) +"m"
+                        dsds = {
+                            "distance":dd,
+                            "value":vendor_data
+                        }
+                        whole_data.append(dsds)
+                    else:
+                        # Check if the query matches any other field (business_name, owner_name, address, etc.)
+                        for field, value in vendor_data.items():
+                            if isinstance(value, str) and user_want.lower() in value.lower():
+                                distance_prefixes = dist_btn(vendor_data['latitude'], vendor_data['longitude'], latitude, longitude)
+                                if distance_prefixes > 1000:
+                                    dd = str(round(distance_prefixes/1000,2)) +"km"
+                                else:
+                                    dd = str(round(distance_prefixes,2)) +"m"
+                                dsds = {
+                                    "distance":dd,
+                                    "value":vendor_data
+                                }
+                                whole_data.append(dsds)
+                                break  # Break the loop if a match is found
+                
+                # Iterate through the query results (AI search )
+                if query.each():
+                    for result in query.each():
+                        document_id = result.key()
+                        data = result.val()
+                        if data['category'] == string:
+                            distance = dist_btn(data['latitude'], data['longitude'], latitude, longitude)
+                            dist_key[distance] = document_id
+                    sorted_keys = sorted(dist_key.keys())
+                    for keys in sorted_keys:
+                        d = db.child("vendor").child(dist_key[keys]).get()
+                        value = d.val()
+                        if keys > 1000:
+                            dd = str(round(keys/1000,2)) +"km"
+                        else:
+                            dd = str(round(keys,2)) +"m"
+                        dis = {"distance":dd,
+                            "value":value
+                            }
+                        whole_data.append(dis)
+                else:
+                    print("No documents found.")
+                json_whole_data = json.dumps(whole_data)
+                return render_template('users.html', result = "ok", msg = whole_data)
+    else:
+        return redirect(url_for('index_login'))            
     # json_whole_data = json.dumps(whole_data)      
     return render_template('users.html')
-        
+
+@app.route('/detail_view_page', methods = ['POST', 'GET'])
+def detail_view_page():
+    # Get the business_id parameter from the URL
+    business_email = request.args.get('business_email')
+    distance = request.args.get('distance')
+    key = business_email.replace('@','_').replace('.','_')
+    print(key)
+    vendors = db.child('vendor').child(key).get()
+    value = vendors.val()
+    print(type(value))
+    result = {
+        "distance": distance,
+        "value": dict(value)
+    }
+    data = []
+    data.append(result)
+    print(data)
+    return render_template('detail_view_page.html', result = "ok", msg = data)
         
         
 

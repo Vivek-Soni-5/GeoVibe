@@ -13,6 +13,7 @@
 }
 
 #my-dialog {
+    margin: auto;
     display: flex;
     flex-direction: column;
     height: 80%;
@@ -70,3 +71,200 @@ p {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+
+*{
+    font-family: 'Nunito', sans-serif;
+    margin:0; padding:0;
+    box-sizing: border-box;
+    outline: none; border:none;
+    text-decoration: none;
+    transition: all .2s linear;
+    text-transform: capitalize;
+ }
+ 
+ html{
+    font-size: 62.5%;
+    overflow-x: hidden;
+ }
+ 
+ body{
+    background: #eee;
+ }
+ 
+ .container{
+    max-width: 1200px;
+    margin:0 auto;
+    padding:3rem 2rem;
+ }
+ 
+ .container .products-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap:2rem;
+ }
+ 
+ .container .products-container .product{
+    text-align: center;
+    padding:3rem 2rem;
+    background: #fff;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+    outline: .1rem solid #ccc;
+    outline-offset: -1.5rem;
+    cursor: pointer;
+ }
+ 
+ .container .products-container .product:hover{
+    outline: .2rem solid orange;
+    outline-offset: 0;
+ }
+
+ .r-image {
+    /* Set the desired width of the container */
+   height: 200px; /* Set the desired height of the container */
+   overflow: hidden; /* Ensure that any content exceeding the dimensions is hidden */
+   position: relative; /* Establish a positioning context for absolute positioning of the image */
+}
+
+.r-image img {
+   width: 100%; /* Make the image fill the entire width of the container */
+   height: 100%; /* Make the image fill the entire height of the container */
+   object-fit: cover; /* Maintain aspect ratio and cover the entire container */
+   position: absolute; /* Position the image absolutely within the container */
+   top: 0;
+   left: 0;
+}
+ 
+ /* .container .products-container .product img{
+    height: 25rem;
+ } */
+ 
+ .container .products-container .product:hover img{
+    transform: scale(1.1);
+ }
+ 
+ .container .products-container .product h3{
+    padding:.5rem 0;
+    font-size: 2rem;
+    color:#444;
+ }
+ 
+ .container .products-container .product:hover h3{
+    color:orange;
+ }
+ 
+ .container .products-container .product .address{
+    font-size: 1rem;
+    color:#444;
+    text-align: left;
+ }
+ .shop_name{
+    text-align: left;
+ }
+ @media (max-width:991px){
+ 
+    html{
+       font-size: 55%;
+    }
+ 
+ }
+ 
+ @media (max-width:768px){
+   
+ 
+    .products-preview .preview img{
+       height: 25rem;
+    }
+    .location {
+       flex-direction: row;
+       align-items: center;
+   }
+   .address {
+       margin-bottom: 0;
+       margin-right: 10px;
+   }
+   .distance{
+    margin-left: 0.5px;
+   }
+   .search-container #searchBox {
+    margin: 10px;
+ }
+ }
+ 
+ @media (max-width:450px){
+ 
+    html{
+       font-size: 50%;
+    }
+ 
+ }
+ .location {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+ }
+ 
+ /* Style for the address */
+ .address {
+    margin-bottom: 5px; /* Adjust the margin as per your design */
+ }
+ 
+ /* Style for the distance */
+ .distance {
+    color: #888; /* Adjust the color as per your design */
+    font-size: 12px;
+    margin-left: 2px;
+ }
+ .product:hover .distance {
+    color: orange; /* Change the color when hovering */
+ }
+ 
+ /* Search container styles */
+ .search-container {
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+ 
+ /* Search box styles */
+ #searchBox ,#latitude ,#longitude {
+    padding: 8px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+ }
+ 
+ 
+ /* Search button styles */
+ #searchButton {
+    padding: 8px 15px;
+    background-color: orange;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+ }
+ 
+ .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+ }
+ 
+ .shop_location {
+    margin-right: 10px; 
+ }
+ 
+ .offer p {
+    padding: 6px;
+    background-color: #27ae60;
+    color: #fff;
+    border-radius: 17px;
+    font-weight: bold;
+ }
+ 

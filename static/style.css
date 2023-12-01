@@ -15,6 +15,9 @@
     font-size: 12px;
     background-color: #ecf0f3;
     color: #a0a5a8;
+    background-image: url('bg_img.png');
+    background-size: cover;
+    background-attachment: fixed;
   }
   
   .main {

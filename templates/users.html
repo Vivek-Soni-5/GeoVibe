@@ -5,15 +5,67 @@
 </head>
 <body id = "content">
 
-    {% if result == "ok" %}
-        {{msg}}
+    {% if result == "ok" or result == "ok dialog"%}
+    <div class="container">
+        <div class="container">
+            <div class="search-container">
+                <form method = 'POST' onsubmit="getLocation(event)">
+                <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
+                <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+                <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                <input type="submit" id="searchButton" value="Submit">
+                </form>
+            </div>
+        </div>
+        <div class="products-container">
+        {% for item in msg %}
+            <div class="product" data-name="p-5">
+                <div class = "r-image">
+                    <img src="{{item['value']['image_url']}}" alt="not avail" />
+                </div>
+                <div class="title">
+                <h3 class="shop_name">
+                    <a href="{{ url_for('detail_view_page', business_email=item['value']['email'], distance = item['distance']) }}" style = "color : orange;">
+                        {{ item['value']['business_name'] }}
+                    </a>
+                </h3>
+                <div class="offer">
+                    <p>Get 10% off!</p>
+                </div>
+                </div>
+                <div class="location">
+                <div class="address">
+                    {{item['value']['address']}}
+                </div>
+                <div class="distance">{{item['distance']}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>    
+    {% else %}
+        <div class="container">
+            <div class="search-container">
+                <form method = 'POST' onsubmit="getLocation(event)">
+                <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
+                <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+                <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                <input type="submit" id="searchButton" value="Submit">
+                </form>
+            </div>
+        </div>
     {% endif %}
 
     {%if result == "ok dialog" %}
     <dialog id="my-dialog">
         <div>
             {% for item in msg %}
-                <h2>{{item.value.shop_name}}</h2>
+                {% if item.value.shop_name == null %}
+                    <h2>{{item.value.business_name}}</h2>
+                {% endif %}
+                {% if item.value.business_name == null %}
+                    <h2>{{item.value.shop_name}}</h2>
+                {% endif %}
                 <p>{{ item.value.address }}</p><br><hr>
             {% endfor %}
             
@@ -24,7 +76,6 @@
         </div>
     </dialog>
         <script>
-            
             var curUser = {{ cur_user | tojson | safe }};
             var msg = {{ msg | tojson | safe }};
   
@@ -85,15 +136,8 @@
             document.getElementById("send_email").addEventListener("click", addLoader);
         </script>
     {%endif%}
-
-    <form method="post">
-        <h1>Location</h1>
-        <input type="text" name="user_want" id="user_want" placeholder="What you want?">
-        <input type="text" name="latitude" id="latitude" placeholder="Enter latitude">
-        <input type="text" name="longitude" id="longitude" placeholder="Enter longitude">
-        <button type="button" onclick="getLocation()" id="current_location_btn">Get Current Location</button>
-        <input type="submit" value="Submit">
-    </form>
+    
+</div>
 </body>
 
 </html>

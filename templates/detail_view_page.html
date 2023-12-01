@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <title>Destination Page</title>
+</head>
+<body>
+    {% if result == "ok" %}
+        <div id="map" style="height: 300px; width: 400px"></div>
+        <script>
+
+            // getting current location and business location
+            var cur_long, cur_lat;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    cur_lat = position.coords.latitude;
+                    cur_long = position.coords.longitude;
+
+                    var mymap = L.map('map').setView([cur_lat, cur_long], 18);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                    }).addTo(mymap);
+                
+                    // Add routing control
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(cur_lat, cur_long), // Replace with your origin coordinates
+                            L.latLng({{msg[0]['value']['latitude']}}, {{msg[0]['value']['longitude']}}) // Replace with your destination coordinates
+                        ],
+                        routeWhileDragging: true // Display route while dragging the waypoints
+                        }).addTo(mymap);
+                
+                    // Add markers, polygons, etc. to the map
+                    L.marker([cur_lat, cur_long]).addTo(mymap)
+                    .bindPopup("Your Location")
+                    .openPopup();
+                    L.marker([{{msg[0]['value']['latitude']}}, {{msg[0]['value']['longitude']}}]).addTo(mymap)
+                    .bindPopup("{{msg[0]['value']['business_name']}}")
+                    .openPopup();
+
+
+                }, function (error) {
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            alert("User denied the request for Geolocation.");
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            alert("Location information is unavailable.");
+                            break;
+                        case error.TIMEOUT:
+                            alert("The request to get user location timed out.");
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            alert("An unknown error occurred.");
+                            break;
+                    }
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+            
+            </script>
+    {% else %}
+        <p>Business ID not found in the URL.</p>
+    {% endif %}
+</body>
+</html>

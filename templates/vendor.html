@@ -4,7 +4,6 @@
     <title>Vendor Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor_registration.css') }}">
-    <script src="{{ url_for('static', filename='vendor.js') }}"></script>
 </head>
 <body>
     <div class="container">
@@ -27,6 +26,8 @@
                     <option value="grocery">Grocery</option>
                     <option value="medical">Medical</option>
                     <option value="gift">Gift</option>
+                    <option value="college">College</option>
+                    <option value="pg">PG</option>
                     <!-- Add more options as needed -->
                 </select>
             </div>
@@ -83,12 +84,13 @@
                 <input type="text" id="password" name="password" placeholder="Enter Password">
             </div>
             <div class="input-group">
-                <button type="button" onclick="getLocation()" id="current_location_btn">Get Current Location</button>
+                <button type="button" id="current_location_btn">Get Current Location</button>
             </div>
             <div class="input-group">
                 <input type="submit" value="Submit" class="sbm">
             </div>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='vendor.js') }}"></script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <html>
 <head>
-    <script  src="{{ url_for('static', filename='vendor.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script  src="{{ url_for('static', filename='users.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='loader.css') }}">  
 </head>
 <body id = "content">
 
     {% if result == "ok" or result == "ok dialog"%}
     <div class="container">
-        <div class="container">
             <div class="search-container">
                 <form method = 'POST' onsubmit="getLocation(event)">
                 <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
@@ -16,7 +16,6 @@
                 <input type="submit" id="searchButton" value="Submit">
                 </form>
             </div>
-        </div>
         <div class="products-container">
         {% for item in msg %}
             <div class="product" data-name="p-5">
@@ -30,7 +29,9 @@
                     </a>
                 </h3>
                 <div class="offer">
-                    <p>Get 10% off!</p>
+                    {% if item['value']['discount_offer'] is defined %}
+                        <p>Get {{ item['value']['discount_offer'] }}% off!</p>
+                    {% endif %}
                 </div>
                 </div>
                 <div class="location">

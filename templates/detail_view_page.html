@@ -6,15 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='detail_view_page.css') }}"> 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <title>Destination Page</title>
 </head>
 <body>
     {% if result == "ok" %}
-        <div id="map" style="height: 300px; width: 400px"></div>
-        <script>
+    <div class="restaurant">
 
+        </h2>{{msg[0]['value']['business_name']}}</h2>
+        <div id="map" style="height: 900px;"></div>
+        <script>
             // getting current location and business location
             var cur_long, cur_lat;
             if (navigator.geolocation) {
@@ -63,11 +66,11 @@
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
-            }
-            
-            </script>
+            }         
+        </script>
     {% else %}
         <p>Business ID not found in the URL.</p>
     {% endif %}
+    </div>
 </body>
 </html>

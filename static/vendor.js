@@ -1,3 +1,7 @@
+document.getElementById("current_location_btn").addEventListener("click", function(event) {
+  getLocation(event);
+});
+
 function getLocation(event) {
 
   // Prevent the default form submission behavior
@@ -14,7 +18,7 @@ function showPosition(position) {
   document.getElementById("latitude").value = position.coords.latitude;
   document.getElementById("longitude").value = position.coords.longitude;
   // Continue with the form submission
-  document.forms[0].submit(); // Submit the first form on the page
+  //document.forms[0].submit(); // Submit the first form on the page
 }
 
 function showError(error) {

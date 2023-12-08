@@ -1,0 +1,125 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor_dashboard.css') }}">
+    <script  src="{{ url_for('static', filename='vendor_dashboard.js') }}"></script>
+    
+    <title>Vendor Dashboard</title>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>Vendor Dashboard</h1>
+        </div>
+        
+    <div class="container">
+
+        <div class="menu">
+            <div class="menu-item" onclick="openTab('shopInfo')">Shop Info</div>
+            <div class="menu-item" onclick="openTab('items')">Items</div>
+            <div class="menu-item" onclick="openTab('offers')">Offers</div>
+            <div class="menu-item" onclick="openTab('contact')">Contact</div>
+        </div>
+        {% if result == "initial" %}
+        <div class="content">
+            <div id="shopInfo" class="tab-content active">
+                <h2 class="card-title">Shop Information</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">Shop Name: {{ data['business_name'] }}</p>
+                        <p class="card-text">Address: {{data['address'] }}</p>
+                        <p class="card-text">Owner: {{ data['owner_name'] }}</p>
+                        <p class="card-text">Description: {{ data['business_description'] }}</p>
+                    </div>
+                </div>
+                <!-- Add your shop information form or content here -->
+            </div>
+
+            
+            <div id="items" class="tab-content">
+                <div class = "r-image">
+                    <img src = "{{ data['menu_image'] }}" alt="not available/not uploaded"/>
+                </div>
+                <div class="menu_img">
+                    <form method="post" action="/vendor_dashboard" enctype="multipart/form-data">
+                        <input type="file" name="menu_image" accept="image/*" required>
+                        <input type = "submit" class="upload_image" value = "Upload New Menu Image" />
+                    </form>
+                </div>
+                <div class="menu_item">
+                    <button class="upload_image" onclick="addMenuItem()">Add Item</button>
+                <form id="addItemForm" style="display:none;">
+                    <label for="itemName">Item Name:</label>
+                    <input type="text" id="itemName" required><br>
+            
+                    <label for="itemPrice">Item Price:</label>
+                    <input type="number" id="itemPrice" required><br>
+            
+                    <label for="itemImage">Item Image (optional):</label>
+                    <input type="file" id="itemImage"><br>
+            
+                    <button class="submit-button" type="button" onclick="submitItemForm()">Submit Item</button>
+                </form>
+            
+                <!-- List to display added items -->
+                <ul id="itemList" class="item-list"></ul>
+                
+                </div><!-- Add your items form or content here -->
+            </div>
+
+            <div id="offers" class="tab-content">
+                <div class="offer_box">
+                    <div class="card1">
+                        <div class="one">
+                            <h2 class="ctitle">Update Offer</h2>
+                                    <form method="post" action="/vendor_dashboard">
+                                        <label for="Discount">Enter the Discount</label>
+                                        <input type="text" name = "discount_offer" placeholder="Ex : 10,20..."><br>
+                                        <label for="DiscountDescription">Enter the Discount Description</label>
+                                        <textarea name = "discount_description" rows="3" placeholder="-Ongoing Offer
+                                        -Limited time Offer" ></textarea>
+                                        <input type="submit" class="one_sub" value="Update" style="width: fit-content; border-radius: 0.7em; display: flex;margin-left:35% ;">
+                                    </form>
+                        </div>
+
+                        <div class="mid">
+                        </div>
+
+                        <div class="two">
+                            <h2 class="ctitle">Current Offer</h2>
+                                <h3 style="text-align: center;"> Discount Percentage % </h3>
+                                <h1 id="c_discount">{{ data['discount_offer'] }}</h1>
+                                <h3 style="text-align: center;"> Description </h3>
+                                <p style="text-align: center;">
+                                    {{ data['discount_description'] }}
+                                </p>
+
+                        </div>
+                        <!-- Add your contact form or content here -->
+                        </div>
+                </div>
+                <!-- Add your offers form or content here -->
+            </div>
+
+            <div id="contact" class="tab-content">
+                <div class="card">
+                <h2 class="card-title">Contact Information</h2>
+                    <ul>
+                        <li class="card-text">Email: {{ data['email'] }}</li>
+                        <li class="card-text">Phone: {{ data['phone'] }}</li>
+                        <li class="card-text">Address: {{ data['address'] }}</li>
+                        <li class="card-text">Social Media: <a href="#">Facebook</a>, <a href="#">Twitter</a>, <a href="#">Instagram</a></li>
+                    </ul>
+                <!-- Add your contact form or content here -->
+                    
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    
+    </div>
+</body>
+</html>

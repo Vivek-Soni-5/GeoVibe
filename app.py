@@ -119,6 +119,32 @@ def index_signup():
     # Render the HTML form
     return render_template('login_signup.html')
 
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        email_check = email.replace('@','_').replace('.','_')
+        flag = 0
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+        except:
+            return render_template('login_signup.html', result = "not ok", msg = "Wrong Email or Password !")
+        
+        
+        vendor = db.child('vendor').get()
+        if vendor.each():
+            for v in vendor.each():
+                if email_check == v.key():
+                    flag = 1
+        if flag == 1:
+            return redirect(url_for('vendor_dashboard'))
+        else:
+            return redirect(url_for('users'))
+
+    # Render the HTML form
+    return render_template('login_signup.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def index_login():
     if request.method == 'POST':

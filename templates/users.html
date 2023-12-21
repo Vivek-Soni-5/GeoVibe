@@ -3,19 +3,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script  src="{{ url_for('static', filename='users.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='loader.css') }}">  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body id = "content">
 
+      <!-- 
+    - #HEADER
+  -->
+
+  <header class="header">
+    <div class="containers">
+
+      <button class="nav-open-btn" aria-label="open menu" data-nav-toggler>
+        <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+      </button>
+
+      <a href="#" class="logo">
+        <img src="{{ url_for('static', filename='images/logo_geovibe.jpg') }}" width="77" height="20" alt="Nike home">
+      </a>
+      
+
+      <nav class="navbar" data-navbar>
+
+        <button class="nav-close-btn" aria-label="close menu" data-nav-toggler>
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <ul class="navbar-list">
+
+          <li>
+            <a href="{{ url_for('users')}}" class="navbar-link">Home</a>
+          </li>
+
+          <li>
+            <a href="#" class="navbar-link">About</a>
+          </li>
+
+          <li>
+            <a href="#" class="navbar-link">Contact</a>
+          </li>
+        </ul>
+
+      </nav>
+      <div class="search-container">
+        <form method = 'POST' onsubmit="getLocation(event)">
+        <input type="text" id="searchBox" name="user_want" placeholder="What you want?" />
+        <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+        <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+        <input type="submit" id="searchButton" value="Search">
+        </form>
+    </div>
+
+      <!-- <div class="header-action">
+
+        <button class="header-action-btn" aria-label="add to cart">
+          <ion-icon name="bag-handle-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <button class="profile-btn" aria-label="profile">
+          <img src="./assets/images/profile.png" width="100" height="100" alt="profile" class="img">
+        </button>
+
+      </div> -->
+
+      <div class="overlay" data-overlay data-nav-toggler></div>
+
+    </div>
+    
+  </header>
+
     {% if result == "ok" or result == "ok dialog"%}
     <div class="container">
-            <div class="search-container">
+            <!-- <div class="search-container">
                 <form method = 'POST' onsubmit="getLocation(event)">
                 <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
                 <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
                 <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
                 <input type="submit" id="searchButton" value="Submit">
                 </form>
-            </div>
+            </div> -->
         <div class="products-container">
         {% for item in msg %}
             <div class="product" data-name="p-5">
@@ -24,7 +92,7 @@
                 </div>
                 <div class="title">
                 <h3 class="shop_name">
-                    <a href="{{ url_for('detail_view_page', business_email=item['value']['email'], distance = item['distance']) }}" style = "color : orange;">
+                    <a href="{{ url_for('detail_page', business_email=item['value']['email'], distance = item['distance']) }}" style = "color : orange;">
                         {{ item['value']['business_name'] }}
                     </a>
                 </h3>
@@ -46,14 +114,14 @@
     </div>    
     {% else %}
         <div class="container">
-            <div class="search-container">
+            <!--<div class="search-container">
                 <form method = 'POST' onsubmit="getLocation(event)">
                 <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
                 <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
                 <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
                 <input type="submit" id="searchButton" value="Submit">
                 </form>
-            </div>
+            </div>-->
         </div>
     {% endif %}
 
@@ -72,7 +140,9 @@
             
         </div>
         <div>
-            <button id="send_email">send me email</button>
+            {% if anonymous != "yes" %}
+                <button id="send_email">Email Me Offers</button>
+            {% endif %}
             <button id="close-dialog">Close</button>
         </div>
     </dialog>
@@ -81,7 +151,11 @@
             var msg = {{ msg | tojson | safe }};
   
             const closeDialogButton = document.getElementById('close-dialog');
-            const send_email_btn = document.getElementById('send_email');
+            
+            {% if anonymous != "yes" %}
+                const send_email_btn = document.getElementById('send_email');
+            {% endif %}
+
             const dialog = document.getElementById('my-dialog');
             dialog.showModal();
 
@@ -124,21 +198,38 @@
                 document.getElementById("content").appendChild(main_loader_div).appendChild(loaderDiv);
             }
 
-            send_email_btn.addEventListener('click', () => {
-                dialog.style.display = "none";
-                dialog.close();
-                processData(msg, curUser);
-            });
-            closeDialogButton.addEventListener('click', () => {
+            {% if anonymous != "yes" %}
+                send_email_btn.addEventListener('click', () => {
+                    dialog.style.display = "none";
+                    dialog.close();
+                    addLoader()
+                    processData(msg, curUser);
+
+                });
+            {% endif %}
+
+            document.getElementById("close-dialog").addEventListener('click', () => {
                 dialog.style.display = "none";
                 dialog.close();
             });
             // Add event listener to the button
-            document.getElementById("send_email").addEventListener("click", addLoader);
+            //document.getElementById("send_email").addEventListener("click", addLoader);
         </script>
     {%endif%}
     
 </div>
+
+<!-- 
+    - custom js link
+  -->
+  <script src="{{ url_for('static', filename='detail_page.js') }}"></script>
+
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 </body>
 
 </html>

@@ -38,15 +38,18 @@
 
             
             <div id="items" class="tab-content">
-                <div class = "r-image">
-                    <img src = "{{ data['menu_image'] }}" alt="not available/not uploaded"/>
-                </div>
+                {% for img in data['menu_image'] %}
+                    <div class = "r-image">
+                        <img src = "{{ img }}" alt="not available/not uploaded"/>
+                    </div>
+                {% endfor %}
                 <div class="menu_img">
                     <form method="post" action="/vendor_dashboard" enctype="multipart/form-data">
                         <input type="file" name="menu_image" accept="image/*" required>
-                        <input type = "submit" class="upload_image" value = "Upload New Menu Image" />
+                        <input type = "submit" class="upload_image" value = "Add Menu Image" />
                     </form>
                 </div>
+                <!--
                 <div class="menu_item">
                     <button class="upload_image" onclick="addMenuItem()">Add Item</button>
                 <form id="addItemForm" style="display:none;">
@@ -62,10 +65,10 @@
                     <button class="submit-button" type="button" onclick="submitItemForm()">Submit Item</button>
                 </form>
             
-                <!-- List to display added items -->
+                
                 <ul id="itemList" class="item-list"></ul>
                 
-                </div><!-- Add your items form or content here -->
+                </div>-->
             </div>
 
             <div id="offers" class="tab-content">

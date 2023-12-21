@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='detail_view_page.css') }}"> 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='direction.css') }}"> 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <title>Destination Page</title>
@@ -15,8 +15,7 @@
     {% if result == "ok" %}
     <div class="restaurant">
 
-        </h2>{{msg[0]['value']['business_name']}}</h2>
-        <div id="map" style="height: 900px;"></div>
+        <div id="map" style="height: 600px;"></div>
         <script>
             // getting current location and business location
             var cur_long, cur_lat;

@@ -131,6 +131,7 @@ def index_login():
         except:
             return render_template('login_signup.html', result = "not ok", msg = "Wrong Email or Password !")
         
+        
         vendor = db.child('vendor').get()
         if vendor.each():
             for v in vendor.each():
@@ -143,6 +144,32 @@ def index_login():
 
     # Render the HTML form
     return render_template('login_signup.html')
+
+@app.route('/forget_password', methods = ['POST', 'GET'])
+def forget_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        try:
+            auth.send_password_reset_email(email)
+            msg = ("Password reset email sent successfully.")
+            return render_template('forget_password.html', result = "ok", msg_data = msg)
+        except Exception as e:
+            msg = (f"Error sending password reset email: {e}")
+            return render_template('forget_password.html', result = "not ok", msg_data = msg)
+        
+    return render_template('forget_password.html')
+
+@app.route('/signin_anonymous', methods = ['POST', 'GET'])
+def signin_phone_number():
+    try:
+        user = auth.sign_in_anonymous()
+        print("Successfully signed in anonymously. UID:", user['localId'])
+        return redirect(url_for('users'))
+    except Exception as e:
+        res = (f"Error signing in anonymously: {e}")
+        return render_template('login_signup.html', result = "not ok", msg = res)
+        
+
 
 @app.route('/vendor_registration', methods=['GET', 'POST'])
 def vendor_registration():
@@ -216,14 +243,25 @@ def vendor_dashboard():
                 storage.child("uploads/" + menu_image.filename).put(menu_image)
                 # Get the download URL of the uploaded file
                 menu_image_url = storage.child("uploads/" + menu_image.filename).get_url(None)
+                current_images = db.child("vendor").child(key).child("menu_image").get().val()
+                print(type(current_images))
+                img_list = []
+                if current_images is not None:
+                    # Append the new menu_image_url to the list
+                    img_list = (current_images)
+                    img_list.append(menu_image_url)
+                else:
+                    img_list.append(menu_image_url)
+                
                 vendor_ref = db.child('vendor').child(key)
                 vendor_ref.update({
-                    "menu_image":menu_image_url
+                    "menu_image":img_list
                 })
                 #Displaying existing data
                 vendor = db.child('vendor').child(key).get()
                 value = vendor.val()
                 vendor_data = dict(value)
+                print(vendor_data)
                 return render_template('vendor_dashboard.html', result = "initial", data = vendor_data)
             
             elif 'discount_offer' in request.form:
@@ -289,8 +327,12 @@ def dialog_box():
 @app.route('/users', methods = ['GET','POST'])
 def users():  
     current_user = auth.current_user
-    if current_user:       
-        email = str(current_user['email'])
+    flag = 0
+    if current_user:
+        if 'email' in current_user:       
+            email = str(current_user['email'])
+        else:
+            flag = 1
         if request.method == 'POST':
             #user_ip = request.remote_addr
             latitude = request.form['latitude']
@@ -308,9 +350,9 @@ def users():
                         distance = dist_btn(data['latitude'], data['longitude'], latitude, longitude)
                         print(distance)
                         if distance > 1000:
-                            ddd = str(round(distance/1000,2)) +"km"
+                            ddd = str(round(distance/1000,2)) +" km"
                         else:
-                            ddd = str(round(distance/1000,2)) +"km"
+                            ddd = str(round(distance/1000,2)) +" km"
                         distance_radius = 1000
                         if distance <= distance_radius:
                             dd = {
@@ -322,9 +364,15 @@ def users():
                             whole_vendor_data.append(dd)
                 json_whole_vendor_data = json.dumps(whole_vendor_data)
                 data_json = json.loads(json_whole_vendor_data)
-                r = json.dumps(email)
-                cur_user = json.loads(r)
-                return render_template('users.html', result = "ok dialog", msg = data_json, cur_user = cur_user)
+                
+                if flag == 0:
+                    r = json.dumps(email)
+                    cur_user = json.loads(r)
+                    return render_template('users.html', result = "ok dialog", msg = data_json, cur_user = cur_user)
+                elif flag == 1:
+                    r = json.dumps("null")
+                    cur_user = json.loads(r)
+                    return render_template('users.html', result = "ok dialog", anonymous = "yes", msg = data_json, cur_user = cur_user)
                 # return jsonify({'result': 'ok dialog', 'msg': data_json, 'cur_user': cur_user})
             else:        
                 query = db.child("vendor").get()
@@ -370,9 +418,9 @@ def users():
                             if isinstance(value, str) and user.lower() in value.lower():
                                 distance_prefixes = dist_btn(vendor_data['latitude'], vendor_data['longitude'], latitude, longitude)
                                 if distance_prefixes > 1000:
-                                    dd = str(round(distance_prefixes/1000,2)) +"km"
+                                    dd = str(round(distance_prefixes/1000,2)) +" km"
                                 else:
-                                    dd = str(round(distance_prefixes/1000,2)) +"km"
+                                    dd = str(round(distance_prefixes/1000,2)) +" km"
                                 dsds = {
                                     "distance":dd,
                                     "value":vendor_data
@@ -411,8 +459,8 @@ def users():
     # json_whole_data = json.dumps(whole_data)      
     return render_template('users.html')
 
-@app.route('/detail_view_page', methods = ['POST', 'GET'])
-def detail_view_page():
+@app.route('/detail_page', methods = ['POST', 'GET'])
+def detail_page():
     # Get the business_id parameter from the URL
     business_email = request.args.get('business_email')
     distance = request.args.get('distance')
@@ -428,8 +476,26 @@ def detail_view_page():
     data = []
     data.append(result)
     print(data)
-    return render_template('detail_view_page.html', result = "ok", msg = data)
+    return render_template('detail_page.html', result = "ok", msg = data)
         
+@app.route('/direction', methods = ['POST', 'GET'])
+def direction():
+    # Get the business_id parameter from the URL
+    business_email = request.args.get('business_email')
+    distance = request.args.get('distance')
+    key = business_email.replace('@','_').replace('.','_')
+    print(key)
+    vendors = db.child('vendor').child(key).get()
+    value = vendors.val()
+    print(type(value))
+    result = {
+        "distance": distance,
+        "value": dict(value)
+    }
+    data = []
+    data.append(result)
+    print(data)
+    return render_template('direction.html', result = "ok", msg = data)
         
 
 if __name__ == '__main__':

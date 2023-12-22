@@ -103,6 +103,10 @@ def send_email():
         return jsonify(res)
     return jsonify("email sent successfully !")
 
+@app.route('/contact', methods = ['POST', 'GET'])
+def contact():
+    return render_template('contact.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def index_signup():
@@ -366,7 +370,9 @@ def users():
             user_want = request.form['user_want']
             print(user_want)
             #if user searches for anything then it will execute
-            if user_want == "":
+            if user_want == "logout":
+                return redirect(url_for('index_login'))
+            if user_want == "notification":
                 whole_vendor_data = []
                 query_all_vendor = db.child("vendor").get()
                 if query_all_vendor.each():
@@ -398,7 +404,7 @@ def users():
                 elif flag == 1:
                     r = json.dumps("null")
                     cur_user = json.loads(r)
-                    return render_template('users.html', result = "ok dialog", anonymous = "yes", msg = data_json, cur_user = cur_user)
+                    return render_template('users.html', result = "ok dialog", anonymous = "yes", msg = data_json, cur_user = "Anonymous")
                 # return jsonify({'result': 'ok dialog', 'msg': data_json, 'cur_user': cur_user})
             else:        
                 query = db.child("vendor").get()
@@ -479,17 +485,26 @@ def users():
                 #     print("No documents found.")
                 # json_whole_data = json.dumps(whole_data)
                 sorted_whole_data = sorted(whole_data, key = lambda x: x['distance'])
-                return render_template('users.html', result = "ok", msg = sorted_whole_data)
+                return render_template('users.html', result = "ok", msg = sorted_whole_data, cur_user = cur_user)
     else:
         return redirect(url_for('index_login'))            
-    # json_whole_data = json.dumps(whole_data)      
-    return render_template('users.html')
+    # json_whole_data = json.dumps(whole_data)
+    if 'email' in current_user:      
+        return render_template('users.html', cur_user = current_user['email'])
+    else:
+        return render_template('users.html', cur_user = "Anonymous")
 
 @app.route('/detail_page', methods = ['POST', 'GET'])
 def detail_page():
     # Get the business_id parameter from the URL
+    if request.method == 'POST':
+        user_want = request.form['user_want']
+        if user_want == 'logout':
+            return redirect(url_for('index_login'))
+    
     business_email = request.args.get('business_email')
     distance = request.args.get('distance')
+    cur_user = request.args.get('current_user')
     key = business_email.replace('@','_').replace('.','_')
     print(key)
     vendors = db.child('vendor').child(key).get()
@@ -502,7 +517,7 @@ def detail_page():
     data = []
     data.append(result)
     print(data)
-    return render_template('detail_page.html', result = "ok", msg = data)
+    return render_template('detail_page.html', result = "ok", msg = data, cur_user = cur_user)
         
 @app.route('/direction', methods = ['POST', 'GET'])
 def direction():

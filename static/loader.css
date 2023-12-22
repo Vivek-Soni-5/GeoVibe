@@ -341,7 +341,7 @@
  
    .navbar-list {
      display: flex;
-     gap: 30px;
+     gap: 20px;
    }
  
    .navbar-link {
@@ -468,7 +468,7 @@ p {
     outline: none; border:none;
     text-decoration: none;
     transition: all .2s linear;
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
  }
  
  /* html{
@@ -622,7 +622,7 @@ p {
  /* Search box styles */
  #searchBox ,#latitude ,#longitude {
     padding: 8px;
-    width: 250px;
+    width: 150px;
     border: 1px solid #ccc;
     border-radius: 20px;
     margin-right: 10px;

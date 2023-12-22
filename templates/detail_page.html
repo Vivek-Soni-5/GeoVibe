@@ -47,15 +47,32 @@
         <ul class="navbar-list">
 
           <li>
+            <a href="#" class="navbar-link" style="font-weight: bold;color:green;">Hi, {{cur_user}}</a>
+          </li>
+
+          <li>
             <a href="{{ url_for('users')}}" class="navbar-link">Home</a>
           </li>
 
+          <!--
           <li>
             <a href="#" class="navbar-link">About</a>
           </li>
+          -->
 
           <li>
-            <a href="#" class="navbar-link">Contact</a>
+            <a href="{{ url_for('contact')}}" class="navbar-link">Contact</a>
+          </li>
+
+          <li>
+            
+            <form method = 'POST'>
+                <input type="hidden" id="searchBox" name="user_want" value="logout" placeholder="What you want?" />
+                <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+                <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                <input type="submit" id="searchButton" style="padding: 3px 5px;background-color: orangered;" value="Logout">
+            </form>
+        
           </li>
 
         </ul>

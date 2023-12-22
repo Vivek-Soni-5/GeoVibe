@@ -12,7 +12,8 @@
       <!-- 
     - #HEADER
   -->
-
+  
+  
   <header class="header">
     <div class="containers">
 
@@ -21,7 +22,7 @@
       </button>
 
       <a href="#" class="logo">
-        <img src="{{ url_for('static', filename='images/logo_geovibe.jpg') }}" width="77" height="20" alt="Nike home">
+        <img src="{{ url_for('static', filename='images/logo_geovibe.jpg') }}" width="77" height="20" alt="GeoVibe logo">
       </a>
       
 
@@ -34,15 +35,42 @@
         <ul class="navbar-list">
 
           <li>
+            <a href="#" class="navbar-link" style="font-weight: bold;color:green;">Hi, {{cur_user}}</a>
+          </li>
+
+          <li>
             <a href="{{ url_for('users')}}" class="navbar-link">Home</a>
           </li>
 
+          <!--
           <li>
             <a href="#" class="navbar-link">About</a>
           </li>
+          -->
 
           <li>
-            <a href="#" class="navbar-link">Contact</a>
+            <a href="{{ url_for('contact')}}" class="navbar-link">Contact</a>
+          </li>
+
+          <li>
+            
+                <form method = 'POST' onsubmit="getLocation(event)">
+                    <input type="hidden" id="searchBox" name="user_want" value="notification" placeholder="What you want?" />
+                    <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+                    <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                    <input type="submit" class="navbar-link" style="background:white;cursor:pointer;" value="Notification">
+                </form>
+            
+          </li>
+          <li>
+            
+            <form method = 'POST'>
+                <input type="hidden" id="searchBox" name="user_want" value="logout" placeholder="What you want?" />
+                <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
+                <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                <input type="submit" id="searchButton" style="padding: 3px 5px;background-color: orangered;" value="Logout">
+            </form>
+        
           </li>
         </ul>
 
@@ -54,7 +82,7 @@
         <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
         <input type="submit" id="searchButton" value="Search">
         </form>
-    </div>
+      </div>
 
       <!-- <div class="header-action">
 
@@ -74,7 +102,7 @@
     
   </header>
 
-    {% if result == "ok" or result == "ok dialog"%}
+  {% if result == "ok" or result == "ok dialog"%}
     <div class="container">
             <!-- <div class="search-container">
                 <form method = 'POST' onsubmit="getLocation(event)">
@@ -92,7 +120,7 @@
                 </div>
                 <div class="title">
                 <h3 class="shop_name">
-                    <a href="{{ url_for('detail_page', business_email=item['value']['email'], distance = item['distance']) }}" style = "color : orange;">
+                    <a href="{{ url_for('detail_page', business_email=item['value']['email'], distance = item['distance'], current_user=cur_user) }}" style = "color : orange;">
                         {{ item['value']['business_name'] }}
                     </a>
                 </h3>

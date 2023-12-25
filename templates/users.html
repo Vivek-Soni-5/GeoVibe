@@ -49,26 +49,23 @@
           -->
 
           <li>
-            <a href="{{ url_for('contact')}}" class="navbar-link">Contact</a>
+            <a href="{{ url_for('contact')}}" class="navbar-link">About Us</a>
           </li>
 
           <li>
             
-                <form method = 'POST' onsubmit="getLocation(event)">
-                    <input type="hidden" id="searchBox" name="user_want" value="notification" placeholder="What you want?" />
-                    <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
-                    <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
+                <form method = 'POST' onsubmit="getLocationN(event)" >
+                    <input type="hidden" id="notificationBox" name="notification" placeholder="What you want?" />
+                    <input type="hidden"  name="Nlatitude" id="Nlatitude" placeholder="Enter latitude">
+                    <input type="hidden"  name="Nlongitude" id="Nlongitude" placeholder="Enter longitude">
                     <input type="submit" class="navbar-link" style="background:white;cursor:pointer;" value="Notification">
                 </form>
             
           </li>
           <li>
             
-            <form method = 'POST'>
-                <input type="hidden" id="searchBox" name="user_want" value="logout" placeholder="What you want?" />
-                <input type="hidden"  name="latitude" id="latitude" placeholder="Enter latitude">
-                <input type="hidden"  name="longitude" id="longitude" placeholder="Enter longitude">
-                <input type="submit" id="searchButton" style="padding: 3px 5px;background-color: orangered;" value="Logout">
+            <form method = 'POST' onsubmit="getLocationL()">
+                <input type="submit" id="searchButton" style="padding: 2px 5px;background-color: orangered;" name = "logout" value="Logout">
             </form>
         
           </li>
@@ -141,7 +138,67 @@
         </div>
     </div>    
     {% else %}
-        <div class="container">
+        
+          <section claa="hero" >
+            <div class="heading">
+                <h1>Discover Nearby Gems</h1>
+            </div>
+            <div class="containerM">
+                <div class="hero-content">
+                    <h2>Explore Hidden Treasures</h2>
+                    <p>
+                      Discover hidden treasures and exclusive offers with us,
+                      Embark on a transformative journey as you uncover the meticulously curated hidden gems and exclusive offers
+                      awaiting discovery through our innovative platform. Our personalized, real-time recommendations not only reveal
+                      nearby attractions but also empower you with the insights needed to make informed decisions, elevating and 
+                      enriching every step of your exploration.
+                    </p>
+                    <button class="cta-button" >Learn More</button>
+                </div>
+                <div class="hero-image">
+                    <img src="{{ url_for('static', filename = 'images/sale_photo2.jpg') }}" alt="About Us" style="width: 100%;
+                    height: auto;
+                    border-radius: 10px;" >
+                </div>      
+            </div>
+        </section>
+        <section claa="hero" >
+          <div class="containerM">
+            
+              <div class="hero-content">
+                  <h2>Unique Vendor Discounts/Special Offers</h2>
+                  <p>
+                    Discover the extraordinary! Our platform delivers tailored recommendations 
+                    for nearby attractions and unveils exclusive deals just for you. Explore hidden 
+                    gems and seize unique vendor discounts with our real-time notifications. 
+                    Elevate your experiences and make informed choices with us today!
+                  </p>
+                  <button class="cta-button" >Learn More</button>
+              </div>
+              <div class="hero-image">
+                <img src="{{ url_for('static', filename = 'images/Offers.png') }}" alt="About Us" style="width: 100%;
+                height: auto;
+                border-radius: 10px;" >
+            </div> 
+                    
+          </div>
+      </section>
+      <section claa="hero" >
+        <div class="containerM">
+          
+            <div class="hero-content">
+                <p>
+                  Discover tailored recommendations and exclusive offers that bring nearby attractions to 
+                  life. Engage in real-time exploration, empowered to make informed decisions. Uncover hidden 
+                  gems with instant alerts about ongoing vendor deals. Elevate satisfaction through personalized 
+                  experiences. Your journey to ultimate enjoyment starts here.
+                </p>
+                
+            </div>
+            
+                  
+        </div>
+    </section>
             <!--<div class="search-container">
                 <form method = 'POST' onsubmit="getLocation(event)">
                 <input type="text" id="searchBox" name="user_want" placeholder="What you want?..." />
@@ -150,7 +207,7 @@
                 <input type="submit" id="searchButton" value="Submit">
                 </form>
             </div>-->
-        </div>
+        
     {% endif %}
 
     {%if result == "ok dialog" %}

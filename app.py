@@ -365,14 +365,16 @@ def users():
             flag = 1
         if request.method == 'POST':
             #user_ip = request.remote_addr
-            latitude = request.form['latitude']
-            longitude = request.form['longitude']
-            user_want = request.form['user_want']
-            print(user_want)
+            
+            # print("latitude:", latitude)
+            
+            # print(user_want)
             #if user searches for anything then it will execute
-            if user_want == "logout":
+            if "logout" in request.form:
                 return redirect(url_for('index_login'))
-            if user_want == "notification":
+            elif "notification" in request.form:
+                latitude = request.form['Nlatitude']
+                longitude = request.form['Nlongitude']
                 whole_vendor_data = []
                 query_all_vendor = db.child("vendor").get()
                 if query_all_vendor.each():
@@ -406,7 +408,10 @@ def users():
                     cur_user = json.loads(r)
                     return render_template('users.html', result = "ok dialog", anonymous = "yes", msg = data_json, cur_user = "Anonymous")
                 # return jsonify({'result': 'ok dialog', 'msg': data_json, 'cur_user': cur_user})
-            else:        
+            else :
+                latitude = request.form['latitude']
+                longitude = request.form['longitude']
+                user_want = request.form['user_want']        
                 query = db.child("vendor").get()
                 dist_key = {}
                 whole_data = []
@@ -485,6 +490,12 @@ def users():
                 #     print("No documents found.")
                 # json_whole_data = json.dumps(whole_data)
                 sorted_whole_data = sorted(whole_data, key = lambda x: x['distance'])
+                if flag == 0:
+                    r = json.dumps(email)
+                    cur_user = json.loads(r)
+                else:
+                    r = json.dumps("Anonymous")
+                    cur_user = json.loads(r)
                 return render_template('users.html', result = "ok", msg = sorted_whole_data, cur_user = cur_user)
     else:
         return redirect(url_for('index_login'))            

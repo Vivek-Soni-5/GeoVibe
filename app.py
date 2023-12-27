@@ -296,7 +296,10 @@ def vendor_dashboard():
             
             elif 'discount_offer' in request.form:
                 discount_offer = request.form['discount_offer']
-                discount_description = request.form['discount_description']
+                if 'discount_description' in request.form:
+                    discount_description = request.form['discount_description']
+                else:
+                    discount_description = "None"
                 vendor_discount = db.child('vendor').child(key)
                 vendor_discount.update({
                     "discount_offer":discount_offer,

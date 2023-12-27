@@ -1,128 +1,260 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor_dashboard.css') }}">
-    <script  src="{{ url_for('static', filename='vendor_dashboard.js') }}"></script>
-    
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
     <title>Vendor Dashboard</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='vendor_dashboard.css')}}">
 </head>
 <body>
-    <div class="main-container">
-        <div class="header">
-            <h1>Vendor Dashboard</h1>
-        </div>
+    {% if result == 'initial' %}
+    <input type="checkbox" id="menu-toggle">
+    <button id="toggle-sidebar-btn" style="position: fixed; top: 10px; left: 10px; z-index: 999;align-items: center;background: transparent;border: none;"><h1 style="padding-left: 10%; padding-right: 10%;">☰</h1></button>
+
+    <div class="sidebar">
         
-    <div class="container">
+        
+        <div class="side-content">
+            <div class="side-header">
+                <h3>Geo-<span>Vibe</span></h3>
+            </div>
+            <div class="profile">
+                <div class="profile-img bg-img" style="background-image: url({{data['image_url']}})"></div>
+                <h4>{{ data['owner_name'] }}</h4>
+                <small>Vendor</small>
+            </div>
 
-        <div class="menu">
-            <div class="menu-item" onclick="openTab('shopInfo')">Shop Info</div>
-            <div class="menu-item" onclick="openTab('items')">Items</div>
-            <div class="menu-item" onclick="openTab('offers')">Offers</div>
-            <div class="menu-item" onclick="openTab('contact')">Contact</div>
+            <div class="side-menu">
+                <ul>
+                    <li>
+                        <a href="#" class="active">
+                            <span class="las la-home"></span>
+                            <small>Shop Info</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="las la-user-alt"></span>
+                            <small>Items</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="las la-envelope"></span>
+                            <small>Offers</small>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="las la-clipboard-list"></span>
+                            <small>Contact</small>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-        {% if result == "initial" %}
-        <div class="content">
-            <div id="shopInfo" class="tab-content active">
-                <h2 class="card-title">Shop Information</h2>
-                <div class="card">
-                    <div class="card-body">
-                        <p class="card-text">Shop Name: {{ data['business_name'] }}</p>
-                        <p class="card-text">Address: {{data['address'] }}</p>
-                        <p class="card-text">Owner: {{ data['owner_name'] }}</p>
-                        <p class="card-text">Description: {{ data['business_description'] }}</p>
-                    </div>
-                </div>
-                <!-- Add your shop information form or content here -->
-            </div>
+    </div>
 
-            
-            <div id="items" class="tab-content">
-                {% for img in data['menu_image'] %}
-                    <div class = "r-image">
-                        <img src = "{{ img }}" alt="not available/not uploaded"/>
-                    </div>
-                {% endfor %}
-                <div class="menu_img">
-                    <form method="post" action="/vendor_dashboard" enctype="multipart/form-data">
-                        <input type="file" name="menu_image" accept="image/*" required>
-                        <input type = "submit" class="upload_image" value = "Add Menu Image" />
-                    </form>
-                </div>
-                <!--
-                <div class="menu_item">
-                    <button class="upload_image" onclick="addMenuItem()">Add Item</button>
-                <form id="addItemForm" style="display:none;">
-                    <label for="itemName">Item Name:</label>
-                    <input type="text" id="itemName" required><br>
-            
-                    <label for="itemPrice">Item Price:</label>
-                    <input type="number" id="itemPrice" required><br>
-            
-                    <label for="itemImage">Item Image (optional):</label>
-                    <input type="file" id="itemImage"><br>
-            
-                    <button class="submit-button" type="button" onclick="submitItemForm()">Submit Item</button>
-                </form>
-            
+    <div class="main-content">
+        <header>
+            <div class="header-content">
+                <label for="menu-toggle">
+                    <span class="las la-bars"></span>
+                </label>
                 
-                <ul id="itemList" class="item-list"></ul>
-                
-                </div>-->
-            </div>
-
-            <div id="offers" class="tab-content">
-                <div class="offer_box">
-                    <div class="card1">
-                        <div class="one">
-                            <h2 class="ctitle">Update Offer</h2>
-                                    <form method="post" action="/vendor_dashboard">
-                                        <label for="Discount">Enter the Discount</label>
-                                        <input type="text" name = "discount_offer" placeholder="Ex : 10,20..."><br>
-                                        <label for="DiscountDescription">Enter the Discount Description</label>
-                                        <textarea name = "discount_description" rows="3" placeholder="-Ongoing Offer
-                                        -Limited time Offer" ></textarea>
-                                        <input type="submit" class="one_sub" value="Update" style="width: fit-content; border-radius: 0.7em; display: flex;margin-left:35% ;">
-                                    </form>
-                        </div>
-
-                        <div class="mid">
-                        </div>
-
-                        <div class="two">
-                            <h2 class="ctitle">Current Offer</h2>
-                                <h3 style="text-align: center;"> Discount Percentage % </h3>
-                                <h1 id="c_discount">{{ data['discount_offer'] }}</h1>
-                                <h3 style="text-align: center;"> Description </h3>
-                                <p style="text-align: center;">
-                                    {{ data['discount_description'] }}
-                                </p>
-
-                        </div>
-                        <!-- Add your contact form or content here -->
-                        </div>
-                </div>
-                <!-- Add your offers form or content here -->
-            </div>
-
-            <div id="contact" class="tab-content">
-                <div class="card">
-                <h2 class="card-title">Contact Information</h2>
-                    <ul>
-                        <li class="card-text">Email: {{ data['email'] }}</li>
-                        <li class="card-text">Phone: {{ data['phone'] }}</li>
-                        <li class="card-text">Address: {{ data['address'] }}</li>
-                        <li class="card-text">Social Media: <a href="#">Facebook</a>, <a href="#">Twitter</a>, <a href="#">Instagram</a></li>
-                    </ul>
-                <!-- Add your contact form or content here -->
+                <div class="header-menu">
+                    <label for="">
+                        <span class="las la-search"></span>
+                    </label>
                     
+                    <div class="user">
+                        <div class="bg-img" style="background-image: url(img/1.png)"></div>
+                        
+                        <span class="las la-power-off"></span>
+                        <span><a href = "{{url_for('index_login')}}" style="color:orange">Logout</a></span>
+                    </div>
                 </div>
             </div>
-        </div>
-        {% endif %}
+        </header>
 
+        <main>
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <small>Home / Dashboard</small>
+            </div>
+
+            <div class="page-content">
+                <div class="content">
+                    <div id="shopInfo" class="tab-content active">
+                        <h2 class="card-title">Shop Information</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text"><b>Shop Name:</b> {{ data['business_name'] }}</p>
+                                <p class="card-text"><b>Address:</b> {{data['address'] }}</p>
+                                <p class="card-text"><b>Owner:</b> {{ data['owner_name'] }}</p>
+                                <p class="card-text"><b>Description:</b> {{ data['business_description'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="items" class="tab-content">
+                        {% for img in data['menu_image'] %}
+                            <div class = "r-image">
+                                <img src = "{{ img }}" alt="not available/not uploaded" onclick="openModal('{{ img }}')"/>
+                            </div>
+                        {% endfor %}
+                        <!-- The Modal -->
+                        <div id="imageModal" class="modal" onclick="closeModal()">
+                            <span class="close" title="Close" onclick="closeModal()">&times;</span>
+                            <img class="modal-content" id="modalImage">
+                        </div>
+                        
+                        <div class="menu_img">
+                            <!--<button class="upload_image"> Upload Your Menu Image Here</button>-->
+                            <form method="post" action="/vendor_dashboard" enctype="multipart/form-data">
+                                <input type="file" name="menu_image" accept="image/*" required>
+                                <input type = "submit" class="upload_image" value = "Add Menu Image" />
+                            </form>
+                        </div>
+                        <div class="menu_item">
+                            <button class="upload_image" onclick="addMenuItem()">Add Item</button>
+                        <form id="addItemForm" style="display:none;">
+                            <label for="itemName">Item Name:</label>
+                            <input type="text" id="itemName" required><br>
+                    
+                            <label for="itemPrice">Item Price:</label>
+                            <input type="number" id="itemPrice" required><br>
+                    
+                            <label for="itemImage">Item Image (optional):</label>
+                            <input type="file" id="itemImage"><br>
+                    
+                            <button class="submit-button" type="button" onclick="submitItemForm()">Submit Item</button>
+                        </form>
+                    
+                        <!-- List to display added items -->
+                        <ul id="itemList" class="item-list"></ul>
+                        
+                        </div><!-- Add your items form or content here -->
+                    </div>
+                    
+                    <div id="offers" class="tab-content">
+                        <div class="offer_box">
+                            <div class="card1">
+                                <div class="one">
+                                    <h2 class="ctitle">Update Offer</h2>
+                                            <form method="post" action="/vendor_dashboard">
+                                                <label for="Discount">Enter the Discount</label><br>
+                                                <input type="text" name="discount_offer" placeholder="Ex : 10,20..." required><br>
+                                                <label for="DiscountDescription" style="margin-top: 10%;">Enter the Discount Description</label><br>
+                                                <textarea rows="3" placeholder="-Limited time Offer" name="discount_description" ></textarea><br>
+                                                <input type="submit" class="one_sub" value="Update" style="width: fit-content; border-radius: 0.7em; display: flex;margin-left:35% ;">
+                                            </form>
+                                </div>
+        
+                                <div class="mid">
+                                </div>
+        
+                                <div class="two">
+                                    <h2 class="ctitle">Current Offer</h2>
+                                        <h3 style="text-align: center;"> Discount Percentage </h3>
+                                        <h1 id="c_discount">{{ data['discount_offer'] }} %</h1>
+                                        <h3 style="text-align: center;"> Description </h3>
+                                        <p style="text-align: center;">
+                                            {{ data['discount_description'] }}
+                                        </p>
+        
+                                </div>
+                                <!-- Add your contact form or content here -->
+                                </div>
+                        </div>
+                        <!-- Add your offers form or content here -->
+                    </div>
+
+                    <div id="contact" class="tab-content">
+                        <!-- Contact content -->
+                        <div class="card">
+                            <h2 class="card-title">Contact Information</h2>
+                            <ul>
+                                <li class="card-text"><b>Email:</b> {{ data['email'] }}</li>
+                                <li class="card-text"><b>Phone:</b> {{ data['phone'] }}</li>
+                                <li class="card-text"><b>Address:</b> {{ data['address'] }}</li>
+                                <li class="card-text"><b>Social Media:</b> <a href="#">Facebook</a>, <a href="#">Twitter</a>, <a href="#">Instagram</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var menuToggle = document.getElementById('menu-toggle');
+            var sidebar = document.querySelector('.sidebar');
+            var toggleSidebarBtn = document.getElementById('toggle-sidebar-btn');
+        
+            toggleSidebarBtn.addEventListener('click', function() {
+                if (sidebar.style.width === '165px') {
+                    // If the sidebar is visible, hide it
+                    sidebar.style.width = '0';
+                    document.querySelector('.main-content').style.marginLeft = '0';
+                    document.querySelector('.main-content').style.width = '100%';
+                } else {
+                    // If the sidebar is hidden, show it
+                    sidebar.style.width = '165px';
+                    document.querySelector('.main-content').style.marginLeft = '165px';
+                    document.querySelector('.main-content').style.width = 'calc(100% - 165px)';
+                }
+
+            });
+        
+            // Get all the side menu items
+            var sideMenuItems = document.querySelectorAll('.side-menu a');
+        
+            // Get all the tab contents
+            var tabContents = document.querySelectorAll('.tab-content');
+        
+            // Add click event listeners to each menu item
+            sideMenuItems.forEach(function(item, index) {
+                item.addEventListener('click', function() {
+                    // Remove the 'active' class from all menu items
+                    sideMenuItems.forEach(function(item) {
+                        item.classList.remove('active');
+                    });
+        
+                    // Add the 'active' class to the clicked menu item
+                    item.classList.add('active');
+        
+                    // Hide all tab contents
+                    tabContents.forEach(function(content) {
+                        content.style.display = 'none';
+                    });
+        
+                    // Display the corresponding tab content
+                    tabContents[index].style.display = 'block';
+                });
+            });
+        
+            // By default, display the "Shop Info" tab
+            sideMenuItems[0].click();
+        });
+        // Function to open the modal and display the clicked image
+        function openModal(imageSrc) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+        
+            modal.style.display = "block";
+            modalImg.src = imageSrc;
+        }
+        
+        // Function to close the modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+        </script>
+        
     
-    </div>
+   {% endif %} 
 </body>
 </html>

@@ -119,15 +119,16 @@
                         <figure class="product-banner">
                             <img src={{ img }} width="600" height="600" loading="lazy" alt="{{ item['value']['business_name']}}"
                             class="img-cover" onclick="openModal('{{ img }}')">
-                            <!-- The Modal -->
-                            <div id="imageModal" class="modal" onclick="closeModal()">
-                              <span class="close" title="Close" onclick="closeModal()">&times;</span>
-                              <img class="modal-content" id="modalImage">
-                            </div>    
+                                
                         </figure>
                         
                     {% endfor%}
 
+            </div>
+            <!-- The Modal -->
+            <div id="imageModal" class="modal" onclick="closeModal()">
+              <span class="close" title="Close" onclick="closeModal()">&times;</span>
+              <img class="modal-content" id="modalImage">
             </div>
             
 
